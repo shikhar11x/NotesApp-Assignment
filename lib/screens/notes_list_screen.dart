@@ -31,6 +31,19 @@ class _NotesListScreenState extends State<NotesListScreen> {
     }
   }
 
+  void _navigateToEditNote(Note note, int index) async {
+    final updatedNote = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddNoteScreen(noteToEdit: note)),
+    );
+
+    if (updatedNote != null) {
+      setState(() {
+        notes[index] = updatedNote;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,9 +90,21 @@ class _NotesListScreenState extends State<NotesListScreen> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteNote(note.id),
+                    trailing: SizedBox(
+                      width: 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () => _navigateToEditNote(note, index),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => _deleteNote(note.id),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
