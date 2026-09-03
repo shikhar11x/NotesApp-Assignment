@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/note.dart';
 import 'add_note_screen.dart';
 
@@ -11,11 +12,50 @@ class NotesListScreen extends StatefulWidget {
 
 class _NotesListScreenState extends State<NotesListScreen> {
   List<Note> notes = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotes();
+  }
+
+  Future<void> _loadNotes() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString('notes');
+      
+      setState(() {
+        if (jsonString != null && jsonString.isNotEmpty) {
+          notes = Note.notesListFromJson(jsonString);
+        } else {
+          notes = [];
+        }
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading notes: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _saveNotes() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = Note.notesListToJson(notes);
+      await prefs.setString('notes', jsonString);
+    } catch (e) {
+      print('Error saving notes: $e');
+    }
+  }
 
   void _deleteNote(String id) {
     setState(() {
       notes.removeWhere((note) => note.id == id);
     });
+    _saveNotes();
   }
 
   void _navigateToAddNote() async {
@@ -28,6 +68,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
       setState(() {
         notes.add(newNote);
       });
+      _saveNotes();
     }
   }
 
@@ -41,11 +82,35 @@ class _NotesListScreenState extends State<NotesListScreen> {
       setState(() {
         notes[index] = updatedNote;
       });
+      _saveNotes();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFF5F1E8),
+        appBar: AppBar(
+          title: const Text(
+            'My Notes',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: const Color(0xFF8B7355),
+          elevation: 0,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8B7355)),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F1E8),
       appBar: AppBar(
@@ -177,7 +242,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToAddNote,
         backgroundColor: const Color(0xFF8B7355),
-        child: const Icon(Icons.add, size: 28),
+        child: const Icon(Icons.add, size: 28, color: Colors.white),
       ),
     );
   }
