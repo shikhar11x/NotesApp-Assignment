@@ -47,48 +47,106 @@ class _NotesListScreenState extends State<NotesListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F1E8),
       appBar: AppBar(
-        title: const Text('Notes'),
+        title: const Text(
+          'My Notes',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF8B7355),
+        elevation: 0,
       ),
       body: notes.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Icon(
+                    Icons.edit_note,
+                    size: 80,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 20),
                   const Text(
                     'No Notes Yet',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF6B5344),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'Create your first note',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: _navigateToAddNote,
-                    child: const Text('Add Note'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF8B7355),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'Add Note',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ],
               ),
             )
           : ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               itemCount: notes.length,
               itemBuilder: (context, index) {
                 final note = notes[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  elevation: 3,
+                  color: const Color(0xFFFFFBF7),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: ListTile(
+                    contentPadding: const EdgeInsets.all(16),
                     title: Text(
                       note.title,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Color(0xFF3E2723),
+                      ),
                     ),
-                    subtitle: Text(
-                      note.description.isEmpty
-                          ? 'No description'
-                          : note.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        note.description.isEmpty
+                            ? 'No description'
+                            : note.description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
                     trailing: SizedBox(
                       width: 100,
@@ -96,11 +154,17 @@ class _NotesListScreenState extends State<NotesListScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            icon: const Icon(
+                              Icons.edit,
+                              color: Color(0xFF8B7355),
+                            ),
                             onPressed: () => _navigateToEditNote(note, index),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Color(0xFFD32F2F),
+                            ),
                             onPressed: () => _deleteNote(note.id),
                           ),
                         ],
@@ -112,7 +176,8 @@ class _NotesListScreenState extends State<NotesListScreen> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToAddNote,
-        child: const Icon(Icons.add),
+        backgroundColor: const Color(0xFF8B7355),
+        child: const Icon(Icons.add, size: 28),
       ),
     );
   }
